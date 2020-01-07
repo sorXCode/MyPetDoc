@@ -89,12 +89,12 @@ class VetBoardState extends State<VetBoard> {
       ],
     );
 
-    var lastAppointment = Text(
+    final lastAppointment = Text(
       "Last Appointments",
       style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
     );
 
-    var appointmentHistory = Column(
+    final appointmentHistory = Column(
       children: <Widget>[
         createAppointmentEntry(
           icon: FontAwesomeIcons.syringe,
@@ -115,7 +115,7 @@ class VetBoardState extends State<VetBoard> {
       ],
     );
 
-    var setAppointment = Container(
+    final setAppointment = Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10), color: colorYellow),
       height: MediaQuery.of(context).size.height * 0.08,
@@ -127,7 +127,7 @@ class VetBoardState extends State<VetBoard> {
       ),
     );
 
-    var bottomNav = BottomNavyBar(
+    final bottomNav = BottomNavyBar(
       selectedIndex: _selectedIndex,
       showElevation: true,
       onItemSelected: (index) => setState(() {
