@@ -1,17 +1,43 @@
+import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'MyPetDoc',
+      theme: ThemeData(textTheme: GoogleFonts.mavenProTextTheme()),
+      debugShowCheckedModeBanner: false,
+      home: VetBoard(),
+    );
+  }
+}
+
+class VetBoard extends StatefulWidget {
   // This widget is the root of your application.
+  @override
+  VetBoardState createState() => VetBoardState();
+}
+
+class VetBoardState extends State<VetBoard> {
+  var _selectedIndex = 3;
+  final colorElectricViolet = Color.fromRGBO(114, 23, 87, 1);
+  final colorYellow = Color.fromRGBO(255, 185, 40, 1);
+  final colorVermilion = Color.fromRGBO(255, 68, 0, 1);
+
   @override
   Widget build(BuildContext context) {
     final doctorCard = Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(50)),
-        color: Color.fromRGBO(114, 23, 87, 1),
+        color: colorElectricViolet,
       ),
       padding: EdgeInsets.all(20),
       child: Column(
@@ -58,38 +84,41 @@ class MyApp extends StatelessWidget {
     final indicators = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        createIndicator("Health", 89, Color.fromRGBO(255, 185, 40, 1)),
-        createIndicator("Activity", 70, Colors.purple)
+        createIndicator("Health", 89, colorYellow),
+        createIndicator("Activity", 70, colorElectricViolet)
       ],
     );
 
     var lastAppointment = Text(
       "Last Appointments",
-      style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+      style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
     );
 
-    var appointmentHistory = [
-      createAppointmentEntry(
-        icon: FontAwesomeIcons.syringe,
-        color: Colors.purple,
-        title: "Injections",
-        dateTime: DateTime(2019, 8, 21),
-        content: "Koutine vaccinations are given. There are no complications.",
-      ),
-      createAppointmentEntry(
-        icon: FontAwesomeIcons.checkCircle,
-        color: Color.fromRGBO(255, 68, 0, 1),
-        title: "Control Visit",
-        dateTime: DateTime(2019, 6, 12),
-        content: "During the routine examination, no diseases were detected.",
-      )
-    ];
+    var appointmentHistory = Column(
+      children: <Widget>[
+        createAppointmentEntry(
+          icon: FontAwesomeIcons.syringe,
+          color: Colors.purple,
+          title: "Injections",
+          dateTime: DateTime(2019, 8, 21),
+          content:
+              "Koutine vaccinations are given. There are no complications.",
+        ),
+        space,
+        createAppointmentEntry(
+          icon: FontAwesomeIcons.checkCircle,
+          color: colorVermilion,
+          title: "Control Visit",
+          dateTime: DateTime(2019, 6, 12),
+          content: "During the routine examination, no diseases were detected.",
+        )
+      ],
+    );
 
     var setAppointment = Container(
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Color.fromRGBO(255, 185, 40, 1)),
-      height: 50,
+          borderRadius: BorderRadius.circular(10), color: colorYellow),
+      height: MediaQuery.of(context).size.height * 0.08,
       alignment: Alignment.center,
       child: Text(
         "Set up an appointment.",
@@ -97,39 +126,46 @@ class MyApp extends StatelessWidget {
             color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
       ),
     );
-    return MaterialApp(
-      title: 'MyPetDoc',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        // iconTheme: IconThemeData()
-      ),
-      home: SafeArea(
-        child: Scaffold(
-          body: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                doctorCard,
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  padding: EdgeInsets.symmetric(vertical: 30),
-                  height: 450,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      indicators,
-                      lastAppointment,
-                      ...appointmentHistory,
-                      SizedBox(),
-                      setAppointment,
-                    ],
-                  ),
+
+    var bottomNav = BottomNavyBar(
+      selectedIndex: _selectedIndex,
+      showElevation: true,
+      onItemSelected: (index) => setState(() {
+        _selectedIndex = index;
+      }),
+      items: [
+        createBottomItem(icon: FontAwesomeIcons.home, title: "Home"),
+        createBottomItem(icon: FontAwesomeIcons.paw, title: "Dogs"),
+        createBottomItem(icon: FontAwesomeIcons.bone, title: "Feeds"),
+        createBottomItem(icon: FontAwesomeIcons.plus, title: "Vet"),
+      ],
+    );
+    return SafeArea(
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              doctorCard,
+              Container(
+                height: MediaQuery.of(context).size.height * 0.68,
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(vertical: 40),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    indicators,
+                    lastAppointment,
+                    appointmentHistory,
+                    setAppointment,
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
+        bottomNavigationBar: bottomNav,
       ),
     );
   }
@@ -143,7 +179,7 @@ class MyApp extends StatelessWidget {
   }
 
   final space = SizedBox(
-    height: 30,
+    height: 20,
   );
 
   createIndicator(String title, int percent, Color color) {
@@ -159,14 +195,14 @@ class MyApp extends StatelessWidget {
             children: <Widget>[
               Text(
                 title,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
               Text(
                 "$percent%",
                 style: TextStyle(
                     color: Colors.grey,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -200,7 +236,7 @@ class MyApp extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                   color: color, borderRadius: BorderRadius.circular(10)),
-              height: 110,
+              height: MediaQuery.of(context).size.height * 0.15,
               child: Icon(
                 icon,
                 color: Colors.white,
@@ -211,7 +247,7 @@ class MyApp extends StatelessWidget {
           Expanded(
             flex: 3,
             child: Padding(
-              padding: const EdgeInsets.all(15.0),
+              padding: const EdgeInsets.all(25.0),
               child: Column(
                 children: <Widget>[
                   Row(
@@ -220,17 +256,22 @@ class MyApp extends StatelessWidget {
                       Text(
                         title,
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
+                            fontWeight: FontWeight.w700, fontSize: 17),
                       ),
+                      // Forced month to be two 2 characters.
                       Text(
-                        "${dateTime.year}.${dateTime.month}.${dateTime.day}",
+                        "${dateTime.year}.${dateTime.month < 10 ? '0${dateTime.month}' : '${dateTime.month}'}.${dateTime.day}",
                         style: TextStyle(color: Colors.grey),
                       ),
                     ],
                   ),
+                  space,
                   Text(
                     content,
-                    style: TextStyle(fontSize: 15),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w300,
+                    ),
                   )
                 ],
               ),
@@ -238,6 +279,20 @@ class MyApp extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+
+  createBottomItem({IconData icon, String title}) {
+    return BottomNavyBarItem(
+      icon: Icon(
+        icon,
+        color: Colors.purple[100],
+      ),
+      title: Text(
+        title.padLeft(10),
+        style: TextStyle(color: Colors.white),
+      ),
+      activeColor: colorElectricViolet,
     );
   }
 }
